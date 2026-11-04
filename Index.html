@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurnal Pemulihan Luka Emosional Pribadi</title>
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            
+            /* Warna Pastel Tiap Kategori */
+            --cat-a-bg: #f0f7ff; --cat-a-border: #bfdbfe; --cat-a-text: #1e40af;
+            --cat-b-bg: #fff1f2; --cat-b-border: #fecdd3; --cat-b-text: #9f1239;
+            --cat-c-bg: #fffbeb; --cat-c-border: #fef3c7; --cat-c-text: #92400e;
+            --cat-d-bg: #f0fdf4; --cat-d-border: #bbf7d0; --cat-d-text: #166534;
+            --cat-e-bg: #f0fdfa; --cat-e-border: #99f6e4; --cat-e-text: #115e59;
+            --cat-f-bg: #faf5ff; --cat-f-border: #e9d5ff; --cat-f-text: #6b21a8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* Screen Manager */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid var(--border-color);
+        }
+
+        .login-card h2 {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e293b;
+            text-align: center;
+        }
+
+        .login-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #475569;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover { background: var(--primary-hover); }
+        .btn-secondary { background: #64748b; }
+        .btn-secondary:hover { background: #475569; }
+        .btn-danger { background: #ef4444; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background: #f1f5f9; }
+
+        /* Dashboard App Header */
+        header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title h1 { font-size: 1.25rem; font-weight: 600; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        /* Sheet Tabs Navigation */
+        .sheet-bar {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 24px 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab.active {
+            background: var(--card-bg);
+            color: var(--primary);
+            font-weight: 600;
+            border-top: 2px solid var(--primary);
+        }
+
+        .add-tab-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px dashed #cbd5e1;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .add-tab-btn:hover { background: #f8fafc; color: var(--text-main); }
+
+        /* Main Content Container */
+        .container {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 20px 60px 20px;
+        }
+
+        .journal-intro {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+            font-size: 0.92rem;
+            color: #475569;
+        }
+
+        /* Table Design */
+        .journal-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+
+        .journal-table th, .journal-table td {
+            padding: 14px 18px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .journal-table th {
+            background: #f8fafc;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .journal-table col.col-aspek { width: 22%; }
+        .journal-table col.col-panduan { width: 38%; }
+        .journal-table col.col-jawaban { width: 40%; }
+
+        /* Category Header Rows */
+        .category-header td {
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 14px 18px;
+        }
+
+        .cat-a { background: var(--cat-a-bg); color: var(--cat-a-text); border-left: 4px solid var(--cat-a-border); }
+        .cat-b { background: var(--cat-b-bg); color: var(--cat-b-text); border-left: 4px solid var(--cat-b-border); }
+        .cat-c { background: var(--cat-c-bg); color: var(--cat-c-text); border-left: 4px solid var(--cat-c-border); }
+        .cat-d { background: var(--cat-d-bg); color: var(--cat-d-text); border-left: 4px solid var(--cat-d-border); }
+        .cat-e { background: var(--cat-e-bg); color: var(--cat-e-text); border-left: 4px solid var(--cat-e-border); }
+        .cat-f { background: var(--cat-f-bg); color: var(--cat-f-text); border-left: 4px solid var(--cat-f-border); }
+
+        .aspek-title { font-weight: 600; font-size: 0.92rem; color: #1e293b; }
+        .panduan-text { font-size: 0.9rem; color: #475569; }
+
+        /* Textarea Jawaban */
+        textarea.answer-input {
+            width: 100%;
+            min-height: 70px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        textarea.answer-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Modal Settings */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content h3 { margin-bottom: 16px; font-size: 1.1rem; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: #e2e8f0;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN 1: LOGIN -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-card">
+                <h2>Jurnal Pemulihan</h2>
+                <p>Ruang aman & terstruktur untuk memproses pemulihan diri pribadi Anda.</p>
+                
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="usernameInput">Username</label>
+                        <input type="text" id="usernameInput" value="admin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordInput">Password</label>
+                        <input type="password" id="passwordInput" value="123456" required>
+                    </div>
+                    <button type="submit" class="btn">Masuk ke Jurnal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: MAIN DASHBOARD -->
+    <div id="appScreen" class="screen">
+        <header>
+            <div class="header-title">
+                <h1>Jurnal Pemulihan Luka Emosional</h1>
+            </div>
+            <div class="header-actions">
+                <span id="saveStatus" class="status-badge">Tersimpan</span>
+                <button onclick="exportToCSV()" class="btn btn-outline" style="width: auto;">📥 Ekspor CSV</button>
+                <button onclick="openPasswordModal()" class="btn btn-outline" style="width: auto;">🔑 Ganti Password</button>
+                <button onclick="handleLogout()" class="btn btn-secondary" style="width: auto;">Keluar</button>
+            </div>
+        </header>
+
+        <!-- Bar Sheet Navigasi -->
+        <div class="sheet-bar" id="sheetBar">
+            <!-- Sheet Tabs Rendered via JS -->
+            <button class="add-tab-btn" onclick="addNewSheet()">+ Sheet Luka Baru</button>
+        </div>
+
+        <div class="container">
+            <div class="journal-intro">
+                <strong>Catatan Panduan:</strong> Jurnal ini berfokus pada <em>pemulihan diri Anda</em>. Anda tidak dipaksa untuk memaafkan, mengikhlaskan, atau mencari hikmah. Isi setiap jawaban sesuai dengan batas kesiapan dan kenyamanan Anda sendiri. Semuanya tersimpan secara otomatis secara lokal di perangkat Anda.
+            </div>
+
+            <table class="journal-table">
+                <colgroup>
+                    <col class="col-aspek">
+                    <col class="col-panduan">
+                    <col class="col-jawaban">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Aspek</th>
+                        <th>Pertanyaan Panduan</th>
+                        <th>Jawabanku</th>
+                    </tr>
+                </thead>
+                <tbody id="journalTableBody">
+                    <!-- Dynamic Questions Rendered by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL GANTI PASSWORD -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h3>Ganti Password Aplikasi</h3>
+            <div class="form-group">
+                <label>Password Lama</label>
+                <input type="password" id="oldPassInput">
+            </div>
+            <div class="form-group">
+                <label>Password Baru</label>
+                <input type="password" id="newPassInput">
+            </div>
+            <div class="modal-actions">
+                <button onclick="closePasswordModal()" class="btn btn-outline">Batal</button>
+                <button onclick="saveNewPassword()" class="btn">Simpan Password</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Struktur 42 Pertanyaan Reflektif
+        const JOURNAL_QUESTIONS = [
+            {
+                category: "A. Memahami Luka", class: "cat-a", items: [
+                    { id: 1, aspek: "1. Identitas atau judul luka", panduan: "Apa nama atau judul untuk luka emosional ini?" },
+                    { id: 2, aspek: "2. Kejadian yang dialami", panduan: "Seperti apa kronologi atau deskripsi kejadian yang terjadi?" },
+                    { id: 3, aspek: "3. Waktu kejadian dan usiaku saat itu", panduan: "Kapan kejadian ini terjadi dan berapa usiaku saat itu?" },
+                    { id: 4, aspek: "4. Orang-orang yang terlibat", panduan: "Siapa saja pihak atau orang yang terlibat dalam kejadian ini?" },
+                    { id: 5, aspek: "5. Perasaan yang muncul", panduan: "Perasaan apa saja yang hadir saat atau setelah kejadian berlangsung?" },
+                    { id: 6, aspek: "6. Intensitas rasa sakit (skala 0–10)", panduan: "Berapa tingkat kedalaman rasa sakit emosional yang kurasakan (0-10)?" },
+                    { id: 7, aspek: "7. Pikiran yang muncul saat kejadian", panduan: "Apa pikiran atau kutipan yang melintas di benakku saat kejadian terjadi?" },
+                    { id: 8, aspek: "8. Kebutuhan yang tidak terpenuhi", panduan: "Kebutuhan mendasar apa (seperti rasa aman, dihargai, didengar) yang tidak terpenuhi?" },
+                    { id: 9, aspek: "9. Bagian yang paling menyakitkan", panduan: "Bagian atau momen mana dari kejadian ini yang terasa paling menusuk/menyakitkan?" },
+                    { id: 10, aspek: "10. Respons atau caraku bertahan saat itu", panduan: "Bagaimana caraku beradaptasi atau melindungi diri saat situasi itu terjadi?" }
+                ]
+            },
+            {
+                category: "B. Dampak Luka", class: "cat-b", items: [
+                    { id: 11, aspek: "11. Dampak terhadap kehidupanku sekarang", panduan: "Bagaimana pengalaman ini memengaruhi cara hidup, pola hubungan, atau keseharianku saat ini?" },
+                    { id: 12, aspek: "12. Pemicu yang membuat luka muncul kembali", panduan: "Situasi, perkataan, atau kondisi apa yang sering memicu rasa sakit ini kembali terasa?" },
+                    { id: 13, aspek: "13. Keyakinan tentang diriku yang terbentuk akibat kejadian", panduan: "Keyakinan negatif atau asumsi apa tentang diriku sendiri yang muncul akibat kejadian ini?" },
+                    { id: 14, aspek: "14. Bukti dan sudut pandang lain terhadap keyakinan tersebut", panduan: "Fakta atau sudut pandang netral apa yang bisa menantang atau menyeimbangkan keyakinan tersebut?" },
+                    { id: 15, aspek: "15. Hal yang sebenarnya pantas kudapatkan saat itu", panduan: "Sikap, perlakuan, atau kondisi seperti apa yang sejatinya pantas kuterima saat itu?" }
+                ]
+            },
+            {
+                category: "C. Harapan", class: "cat-c", items: [
+                    { id: 16, aspek: "16. Harapan yang kumiliki saat kejadian", panduan: "Apa ekspektasi atau harapan yang sangat kuinginkan terjadi saat situasi itu berlangsung?" },
+                    { id: 17, aspek: "17. Harapan terhadap orang yang terlibat", panduan: "Apa yang sebenarnya kuharapkan dari orang-orang yang terlibat dalam peristiwa tersebut?" },
+                    { id: 18, aspek: "18. Harapan yang belum terpenuhi sampai sekarang", panduan: "Harapan masa lalu apa yang rasanya masih mengganjal dan belum terwujud hingga kini?" },
+                    { id: 19, aspek: "19. Harapan terhadap diriku sendiri", panduan: "Apa harapan yang kuinginkan untuk pertumbuhan dan pemulihan diriku sendiri?" },
+                    { id: 20, aspek: "20. Harapan untuk kehidupanku ke depan", panduan: "Bagaimana gambaran kualitas hidup yang ingin kubangun di masa depan?" },
+                    { id: 21, aspek: "21. Kebutuhan yang ingin kupenuhi melalui harapan tersebut", panduan: "Kebutuhan emosional apa yang mendasari munculnya harapan-harapan tersebut?" }
+                ]
+            },
+            {
+                category: "D. Mencari Jalan Keluar", class: "cat-d", items: [
+                    { id: 22, aspek: "22. Hal yang tidak bisa kuubah dari masa lalu", panduan: "Kenyataan masa lalu apa yang berada di luar kendaliku dan tidak bisa diubah lagi?" },
+                    { id: 23, aspek: "23. Hal yang masih bisa kuubah sekarang", panduan: "Pilihan, sikap, atau respons apa yang saat ini sepenuhnya berada dalam kendaliku?" },
+                    { id: 24, aspek: "24. Jalan keluar yang realistis untuk luka ini", panduan: "Langkah nyata dan masuk akal apa yang bisa kubuat untuk menghadapi luka ini?" },
+                    { id: 25, aspek: "25. Batasan yang perlu kubangun", panduan: "Batasan pribadi (personal boundaries) apa yang perlu kuterapkan untuk melindungi kesejahteraan emosionalku?" },
+                    { id: 26, aspek: "26. Langkah kecil yang bisa kulakukan", panduan: "Tindakan sederhana dan konkret apa yang bisa kumulai hari ini atau minggu ini?" },
+                    { id: 27, aspek: "27. Cara memenuhi kebutuhanku sekarang, meskipun harapanku dahulu tidak terwujud", panduan: "Bagaimana caraku merawat dan memenuhi kebutuhan emosional itu secara mandiri saat ini?" },
+                    { id: 28, aspek: "28. Hal yang perlu kulakukan ketika luka ini muncul kembali", panduan: "Rencana aksi atau teknik penenangan diri apa yang akan kugunakan jika pemicu emosi hadir?" }
+                ]
+            },
+            {
+                category: "E. Pemulihan Diri", class: "cat-e", items: [
+                    { id: 29, aspek: "29. Hal yang ingin kusampaikan kepada diriku di masa lalu", panduan: "Pesan atau kalimat penguatan apa yang ingin kuucapkan pada diriku yang terluka di masa lalu?" },
+                    { id: 30, aspek: "30. Hal yang ingin kupahami tentang diriku", panduan: "Pemahaman atau empati apa yang ingin kuberikan kepada diriku sendiri terkait pengalaman ini?" },
+                    { id: 31, aspek: "31. Hal yang ingin mulai kulepaskan", panduan: "Beban, ekspektasi berlebih, atau kebiasaan emosional apa yang ingin kumulai kendurkan/lepaskan?" },
+                    { id: 32, aspek: "32. Hal yang ingin kujaga dari diriku", panduan: "Nilai, kebaikan, atau kekuatan diri apa yang tetap ingin kupelihara dan lindungi?" },
+                    { id: 33, aspek: "33. Kalimat pengingat untuk diriku ketika luka ini muncul kembali", panduan: "Kalimat afirmasi/pengingat suportif apa yang bisa kubaca saat situasi terasa berat?" },
+                    { id: 34, aspek: "34. Bagaimana aku ingin menjalani hidup setelah memahami luka ini", panduan: "Sikap atau arah hidup seperti apa yang ingin kutempuh setelah memproses pemahaman luka ini?" },
+                    { id: 35, aspek: "35. Apa arti menerima luka ini bagiku, tanpa harus memaafkan atau mengikhlaskan", panduan: "Apa makna menerima kenyataan luka ini sebagai bagian perjalanan hidupku, tanpa paksaan memaafkan/mengikhlaskan?" }
+                ]
+            },
+            {
+                category: "F. Evaluasi", class: "cat-f", items: [
+                    { id: 36, aspek: "36. Intensitas rasa sakit sebelum menulis (0–10)", panduan: "Berapa skala intensitas rasa sakit emosional yang kurasakan tepat sebelum mulai menulis?" },
+                    { id: 37, aspek: "37. Intensitas rasa sakit setelah menulis (0–10)", panduan: "Berapa skala intensitas rasa sakit emosional yang kurasakan setelah menyelesaikan tulisan ini?" },
+                    { id: 38, aspek: "38. Perasaan yang dominan setelah menulis", panduan: "Sensasi emosional atau fisik apa yang paling kuat terasa setelah penuangan ini?" },
+                    { id: 39, aspek: "39. Pemahaman baru yang kudapatkan", panduan: "Wawasan atau kejelasan baru apa yang berhasil kuurai dari sesi menulis ini?" },
+                    { id: 40, aspek: "40. Hal yang masih belum selesai", panduan: "Isu atau rasa ganjal apa yang masih memerlukan waktu atau proses lanjutan?" },
+                    { id: 41, aspek: "41. Harapan atau tujuan yang ingin kutindaklanjuti", panduan: "Rencana tindakan konkret apa yang ingin kukawal setelah refleksi ini?" },
+                    { id: 42, aspek: "42. Status pemrosesan luka", panduan: "Berada di tahap mana proses penguraian luka ini (misal: Baru Memproses, Berjalan, Stabil)?" }
+                ]
+            }
+        ];
+
+        // State Management
+        let appState = {
+            auth: { username: "admin", password: "123" },
+            sheets: [
+                { id: "sheet_1", name: "Luka 1", data: {} }
+            ],
+            activeSheetId: "sheet_1"
+        };
+
+        // Initialize App
+        document.addEventListener("DOMContentLoaded", () => {
+            loadFromLocalStorage();
+        });
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem("emotional_journal_db");
+            if (saved) {
+                appState = JSON.parse(saved);
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem("emotional_journal_db", JSON.stringify(appState));
+            showSaveBadge();
+        }
+
+        function showSaveBadge() {
+            const badge = document.getElementById("saveStatus");
+            badge.textContent = "Menyimpan...";
+            badge.style.background = "#fef08a";
+            badge.style.color = "#854d0e";
+            setTimeout(() => {
+                badge.textContent = "Tersimpan";
+                badge.style.background = "#dcfce7";
+                badge.style.color = "#166534";
+            }, 600);
+        }
+
+        // Login Handler
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById("usernameInput").value;
+            const p = document.getElementById("passwordInput").value;
+
+            if (u === appState.auth.username && p === appState.auth.password) {
+                document.getElementById("loginScreen").classList.remove("active");
+                document.getElementById("appScreen").classList.add("active");
+                renderSheets();
+                renderTable();
+            } else {
+                alert("Username atau Password salah!");
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById("appScreen").classList.remove("active");
+            document.getElementById("loginScreen").classList.add("active");
+        }
+
+        // Sheet Management
+        function renderSheets() {
+            const bar = document.getElementById("sheetBar");
+            bar.innerHTML = "";
+
+            appState.sheets.forEach(sheet => {
+                const tab = document.createElement("div");
+                tab.className = `tab ${sheet.id === appState.activeSheetId ? 'active' : ''}`;
+                tab.onclick = () => switchSheet(sheet.id);
+                
+                tab.innerHTML = `
+                    <span>${sheet.name}</span>
+                    ${appState.sheets.length > 1 ? `<span onclick="deleteSheet(event, '${sheet.id}')" style="cursor:pointer;opacity:0.6;">✕</span>` : ''}
+                `;
+                bar.appendChild(tab);
+            });
+
+            const addBtn = document.createElement("button");
+            addBtn.className = "add-tab-btn";
+            addBtn.textContent = "+ Sheet Luka Baru";
+            addBtn.onclick = addNewSheet;
+            bar.appendChild(addBtn);
+        }
+
+        function switchSheet(sheetId) {
+            appState.activeSheetId = sheetId;
+            renderSheets();
+            renderTable();
+        }
+
+        function addNewSheet() {
+            const num = appState.sheets.length + 1;
+            const newId = `sheet_${Date.now()}`;
+            appState.sheets.push({
+                id: newId,
+                name: `Luka ${num}`,
+                data: {}
+            });
+            appState.activeSheetId = newId;
+            saveToLocalStorage();
+            renderSheets();
+            renderTable();
+        }
+
+        function deleteSheet(e, sheetId) {
+            e.stopPropagation();
+            if (confirm("Apakah Anda yakin ingin menghapus sheet ini? Data jawaban tidak dapat dikembalikan.")) {
+                appState.sheets = appState.sheets.filter(s => s.id !== sheetId);
+                if (appState.activeSheetId === sheetId) {
+                    appState.activeSheetId = appState.sheets[0].id;
+                }
